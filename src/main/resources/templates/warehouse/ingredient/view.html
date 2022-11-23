@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        function refresh(){
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            var url = "/warehouse/ingredient/"+[[${ingredient.id}]]+"/refresh";
+
+            $.ajax({
+                url : url,
+                type : "POST",
+                contentType: "application/json",
+                dataType: "text",
+                beforeSend : function (xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (fragment, status, xhr) {
+                    $("#warehouse-data").replaceWith(fragment);
+                }
+            });
+        }
+        $(document).ready(function(){setInterval(refresh, 5000);});
+    </script>
+</th:block>
+
+<div layout:fragment="content">
+    <div id="warehouse-data">
+        <table class="table table-light">
+            <thead class="bg-primary text-white text-center">
+            <tr>
+                <td colspan="3">
+                    <h4 class="mb-0" th:text="${ingredient.id} + '  ' + ${ingredient.name}" th:onclick="refresh()"></h4>
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="stock : ${ingredient.currentStockInfoDTOList}">
+                <td th:text="${stock.name}"></td>
+                <td th:text="${stock.amount}"></td>
+                <td><button class="btn btn-primary" th:onclick="location.href='/warehouse/currentstock/'+[[${stock.id}]]+'/ingredient'">갱신</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</html>

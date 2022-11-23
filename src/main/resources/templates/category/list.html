@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            $(".dataTable").DataTable({
+                searching: false,
+                lengthChange: false
+            });
+        });
+        function deleteCategory(full, category) {
+            var yes = confirm("정말 삭제하겠습니까?\n\n분류 이름: "+category.name)
+            if (!yes) {
+                return false;
+            }
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/category/delete/" + category.id;
+            if (full) {
+                url += "/full"
+            }
+            var paramData = {
+                id : category.id,
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url : url,
+                type : "POST",
+                contentType : "application/json",
+                data : param,
+                beforeSend : function (xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function (result, status){
+                    alert("분류를 삭제하였습니다.");
+                    window.location.href='/category/list';
+                },
+                error : function (jqXHR, status, error){
+                    alert(jqXHR.responseText);
+                    window.location.href='/category/list';
+                }
+            });
+            return true;
+        }
+    </script>
+</th:block>
+
+<div layout:fragment="content">
+    <div class="kkt-list-title">
+        <h2>분류 목록</h2>
+        <button th:onclick="window.location.href='/category/create'" class="btn btn-primary">등록</button>
+    </div>
+    <table class="table table-light dataTable w-100">
+        <thead class="bg-primary text-white text-center">
+        <tr>
+            <th>ID</th>
+            <th>이름</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category, status: ${categories}">
+            <td th:text="${category.id}"></td>
+            <td th:text="${category.name}"></td>
+            <td class="px-0">
+                <button class="btn btn-primary mx-1 py-1" th:onclick="deleteCategory(false, [[${category}]])">삭제</button>
+                <button class="btn btn-primary mx-1 py-1" th:onclick="window.location.href='/category/update/'+[[${category.id}]]">수정</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            $(".dataTable").DataTable({
+                searching: false,
+                lengthChange: false
+            });
+        });
+        function deleteStore(full, store) {
+            var yes = confirm("정말 삭제하겠습니까?\n\n가맹점 이름: "+store.name)
+            if (!yes) {
+                return false;
+            }
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/store/delete/" + store.id;
+            if (full) {
+                url += "/full"
+            }
+            var paramData = {
+                id : store.id,
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url : url,
+                type : "POST",
+                contentType : "application/json",
+                data : param,
+                beforeSend : function (xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function (result, status){
+                    alert("가맹점을 삭제하였습니다.");
+                    location.href='/store/list';
+                },
+                error : function (jqXHR, status, error){
+                    alert(jqXHR.responseText);
+                    location.href='/store/list';
+                }
+            });
+
+            return true;
+        }
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <div class="kkt-list-title">
+        <h2>가맹점 목록</h2>
+        <button th:onclick="window.location.href='/store/create'" class="btn btn-primary">등록</button>
+    </div>
+        <table class="table dataTable table-light w-100">
+            <thead class="bg-primary text-white text-center">
+            <tr>
+                <td>ID</td>
+                <td>이름</td>
+                <td>위치</td>
+                <td>전화번호</td>
+                <td>이메일</td>
+                <td>배정 창고</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="store, status: ${stores}">
+                <td th:text="${store.id}"></td>
+                <td>
+                    <a th:text="${store.name}"></a>
+                </td>
+                <td th:text="${store.location}"></td>
+                <td th:text="${store.phone}"></td>
+                <td th:text="${store.email}"></td>
+                <td th:text="${store.warehouseName}"></td>
+                <td class="px-0">
+                    <button class="btn btn-primary mx-1 py-1" th:onclick="deleteStore(false, [[${store}]])">삭제</button>
+                    <button class="btn btn-primary mx-1 py-1" th:onclick="location.href='/store/update/'+[[${store.id}]]">수정</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+</div>
+
+</html>

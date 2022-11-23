@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Kokeetea</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/opensource/dist/images/Kokeetea_logo.png}">
+
+    <link th:href="@{/opensource/dist/css/style.css}" rel="stylesheet">
+    <link th:href="@{/opensource/assets/libs/chartist/dist/chartist.min.css}" rel="stylesheet">
+    <link th:href="@{/opensource/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css}" rel="stylesheet">
+
+    <script th:src="@{/opensource/assets/libs/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/opensource/assets/libs/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/opensource/assets/libs/bootstrap/dist/js/bootstrap.min.js}"></script>
+
+    <script th:src="@{/opensource/assets/libs/chartist/dist/chartist.min.js}"></script>
+    <script th:src="@{/opensource/assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js}"></script>
+    <script th:src="@{/opensource/assets/extra-libs/datatables.net/js/jquery.dataTables.js}"></script>
+    <script th:src="@{/opensource/assets/extra-libs/datatables.net-bs4/js/dataTables.bootstrap4.js}"></script>
+    <script th:src="@{/opensource/dist/js/feather.min.js}"></script>
+    <script th:src="@{/opensource/dist/js/sidebarmenu.js}"></script>
+    <script th:src="@{/opensource/dist/js/custom.js}"></script>
+
+    <th:block layout:fragment="script"></th:block>
+    <th:block layout:fragment="css"></th:block>
+
+    <style>
+      .kkt-list-title {
+        display: flex;
+        margin-bottom: 30px;
+      }
+      .kkt-list-title h2 {
+        margin-bottom: 0;
+      }
+      .kkt-list-title button {
+        margin-left: 20px;
+      }
+      table th, table td {
+        vertical-align: middle !important;
+      }
+      .kkt-smallest {
+        width: 10% !important;
+      }
+      .kkt-small {
+        width: 15% !important;
+      }
+      #topbar-ribbon {
+        z-index: 1;
+        transition: 0.2s ease-in;
+        background: linear-gradient(#EFC3BF, transparent);
+        opacity: 1;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 80px;
+      }
+      .navbar-nav {
+        transition: 0.2s ease-in;
+        opacity: 1;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: 2;
+      }
+    </style>
+    <script th:inline="javascript" th:if="${#ctx.containsVariable('errorMessage')}">
+        $(document).ready(function(){
+            var errorMessage = [[${errorMessage}]]
+            if (errorMessage != null) {
+                alert(errorMessage);
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="preloader">
+  <div class="lds-ripple">
+      <div class="lds-pos"></div>
+      <div class="lds-pos"></div>
+  </div>
+</div>
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+    <div th:replace="fragments/topmenu::topmenu"></div>
+    <div th:replace="fragments/sidemenu::sidemenu"></div>
+    <div class="page-wrapper">
+      <div class="container-fluid">
+        <div layout:fragment="content"></div>
+      </div>
+      <div th:replace="fragments/footer::footer"></div>
+    </div>
+</div>
+</body>
+</html>

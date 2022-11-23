@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="sidemenu">
+    <aside class="left-sidebar" data-sidebarbg="skin6">
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav">
+                <li class="sidebar-item" sec:authorize="isAnonymous()">
+                    <a class="sidebar-link" th:href="@{/member/login}" aria-expanded="false">
+                        <i data-feather="power" class="feather-icon"></i>
+                        <span class="hide-menu">로그인</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')">
+                    <a class="sidebar-link" th:href="@{/}" aria-expanded="false">
+                        <i data-feather="home" class="feather-icon"></i>
+                        <span class="hide-menu">재고 현황</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+                    <a class="sidebar-link" th:href="@{/ingredient/list}" aria-expanded="false">
+                        <i data-feather="gift" class="feather-icon"></i>
+                        <span class="hide-menu">재료 관리</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+                    <a class="sidebar-link" th:href="@{/category/list}" aria-expanded="false">
+                        <i data-feather="grid" class="feather-icon"></i>
+                        <span class="hide-menu">분류 관리</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+                    <a class="sidebar-link" th:href="@{/store/list}" aria-expanded="false">
+                        <i data-feather="key" class="feather-icon"></i>
+                        <span class="hide-menu">가맹점 관리</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+                    <a class="sidebar-link" th:href="@{/warehouse/list}" aria-expanded="false">
+                        <i data-feather="truck" class="feather-icon"></i>
+                        <span class="hide-menu">창고 관리</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+                    <a class="sidebar-link" th:href="@{/request/list}" aria-expanded="false">
+                        <i data-feather="dollar-sign" class="feather-icon"></i>
+                        <span class="hide-menu">발주 내역</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="hasAnyAuthority('ROLE_USER')">
+                    <a class="sidebar-link" th:href="@{/request/mycreate}" aria-expanded="false">
+                        <i data-feather="message-square" class="feather-icon"></i>
+                        <span class="hide-menu">발주 요청</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="hasAnyAuthority('ROLE_USER')">
+                    <a class="sidebar-link" th:href="@{/request/mylist}" aria-expanded="false">
+                        <i data-feather="dollar-sign" class="feather-icon"></i>
+                        <span class="hide-menu">발주 내역</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" sec:authorize="isAuthenticated()">
+                    <a class="sidebar-link" th:href="@{/member/logout}" aria-expanded="false">
+                        <i data-feather="power" class="feather-icon"></i>
+                        <span class="hide-menu">로그아웃</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+</div>
+</html>

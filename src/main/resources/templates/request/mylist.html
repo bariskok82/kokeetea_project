@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            $(".dataTable").DataTable({
+                columnDefs: [
+                    { targets: [-1, -2], className: "px-0"},
+                    { targets: [1], render: function (data, type, row) {
+                        return '<a href="/request/myview/'+row[0]+'">'+data+'</a>';
+                    }}, { targets: [-1], render: function (data, type, row) {
+                        var review = {
+                            id: row[0],
+                            date: row[1],
+                            ingredientName: row[2],
+                            amount: row[3],
+                            warehouseName: row[5]
+                        }
+                        return (data[0]==='1'?'<button class="btn btn-primary mx-1 py-1" onclick=\'completeRequest('+JSON.stringify(review)+')\'>완료</button>':'')
+                                +(data[1]==='1'?'<button class="btn btn-primary mx-1 py-1" onclick=\'cancelRequest('+JSON.stringify(review)+')\'>취소</button>':'');
+                    }}
+                ],
+                ordering: false,
+                searching: false,
+                lengthChange: false,
+                serverSide: true,
+                ajax: {
+                    "type" : "POST",
+                    "url" : "/request/myajax",
+                    "beforeSend" : function (xhr){
+                        xhr.setRequestHeader(header, token);
+                    }
+                }
+            });
+        });
+        function completeRequest(request) {
+            var yes = confirm("배송이 완료되었습니까?\n\n재료: "+request.ingredientName+" 수량: "+request.amount+" 창고: "+request.warehouseName);
+            if (!yes) {
+                return false;
+            }
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/request/mycomplete/" + request.id;
+            var paramData = {
+                id : request.id,
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url : url,
+                type : "POST",
+                contentType : "application/json",
+                data : param,
+                beforeSend : function (xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function (result, status){
+                    alert("발주를 완료하였습니다.");
+                    location.href='/request/mylist';
+                },
+                error : function (jqXHR, status, error){
+                    alert(jqXHR.responseText);
+                    location.href='/request/mylist';
+                }
+            });
+            return true;
+        }
+        function cancelRequest(request) {
+            var yes = confirm("발주를 취소하겠습니까?\n\n재료: "+request.ingredientName+" 수량: "+request.amount+" 창고: "+request.warehouseName);
+            if (!yes) {
+                return false;
+            }
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/request/mycancel/" + request.id;
+            var paramData = {
+                id : request.id,
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url : url,
+                type : "POST",
+                contentType : "application/json",
+                data : param,
+                beforeSend : function (xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function (result, status){
+                    alert("발주를 취소하였습니다.");
+                    location.href='/request/mylist';
+                },
+                error : function (jqXHR, status, error){
+                    alert(jqXHR.responseText);
+                    location.href='/request/mylist';
+                }
+            });
+            return true;
+        }
+    </script>
+</th:block>
+
+<div layout:fragment="content">
+    <h2 class="mb-4">발주 목록</h2>
+
+    <table class="table table-light dataTable w-100">
+        <thead class="bg-primary text-white text-center">
+        <tr>
+            <td>ID</td>
+            <td>날짜</td>
+            <td>재료</td>
+            <td>수량</td>
+            <td>창고</td>
+            <td>상태</td>
+            <td></td>
+        </tr>
+        </thead>
+    </table>
+
+</div>
+
+</html>

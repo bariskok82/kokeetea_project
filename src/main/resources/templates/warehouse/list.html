@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+      $(document).ready(function(){
+          $(".dataTable").DataTable({
+              searching: false,
+              lengthChange: false
+          });
+      });
+      function deleteWarehouse(full, warehouse) {
+          var yes = confirm("정말 삭제하겠습니까?\n\n창고 이름: "+warehouse.name)
+          if (!yes) {
+              return false;
+          }
+          var token = $("meta[name='_csrf']").attr("content");
+          var header = $("meta[name='_csrf_header']").attr("content");
+
+          var url = "/warehouse/delete/" + warehouse.id;
+          if (full) {
+              url += "/full"
+          }
+          var paramData = {
+              id : warehouse.id,
+          };
+
+          var param = JSON.stringify(paramData);
+
+          $.ajax({
+              url : url,
+              type : "POST",
+              contentType : "application/json",
+              data : param,
+              beforeSend : function (xhr){
+                  xhr.setRequestHeader(header, token);
+              },
+              dataType : "json",
+              cache : false,
+              success : function (result, status){
+                  alert("창고를 삭제하였습니다.");
+                  location.href='/warehouse/list';
+              },
+              error : function (jqXHR, status, error){
+                  alert(jqXHR.responseText);
+                  location.href='/warehouse/list';
+              }
+          });
+
+          return true;
+      }
+
+      function search(){
+          var warehouseId = $("#warehouseId").val();
+          var ingredientId = $("#ingredientId").val();
+          if(warehouseId & ingredientId){
+              alert("둘 중 한 가지 선택만 검색이 가능합니다.");
+          }else if(warehouseId){
+              location.href="/warehouse/view/"+warehouseId;
+          }else if(ingredientId){
+              location.href="/warehouse/ingredient/"+ingredientId;
+          }
+      }
+
+  </script>
+</th:block>
+
+<div layout:fragment="content">
+    <div class="kkt-list-title">
+        <h2>창고 목록</h2>
+        <button th:onclick="window.location.href='/warehouse/create'" class="btn btn-primary">등록</button>
+    </div>
+    <table class="table dataTable table-light w-100" th:object="${warehouses}">
+        <thead class="bg-primary text-white text-center">
+        <tr>
+            <td>ID</td>
+            <td>이름</td>
+            <td>위치</td>
+            <td>전화번호</td>
+            <td>이메일</td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="warehouse, status: ${warehouses}">
+            <td th:text="${warehouse.id}"></td>
+            <td>
+                <a th:href="'/warehouse/view/'+${warehouse.id}" th:text="${warehouse.name}"></a>
+            </td>
+            <td th:text="${warehouse.location}"></td>
+            <td th:text="${warehouse.phone}"></td>
+            <td th:text="${warehouse.email}"></td>
+            <td>
+                <button class="btn btn-primary mx-1 py-1" th:onclick="deleteWarehouse(false, [[${warehouse}]])">삭제</button>
+                <button class="btn btn-primary mx-1 py-1" th:onclick="location.href='/warehouse/update/'+[[${warehouse.id}]]">수정</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="form-inline justify-content-center" th:object="${searchDTO}">
+        <select th:field="*{warehouseId}" class="form-control">
+            <option th:value="${null}" th:text="창고" selected></option>
+            <option th:value="${warehouse.id}" th:text="${warehouse.name}" th:each="warehouse : ${warehouseFilter}"></option>
+        </select>
+        <select th:field="*{ingredientId}" class="form-control">
+            <option th:value="${null}" th:text="재료" selected></option>
+            <option th:value="${ingredient.id}" th:text="${ingredient.name}" th:each="ingredient : ${ingredientFilter}"></option>
+        </select>
+        <button class="btn btn-primary" th:onclick="search()">검색</button>
+    </div>
+
+</div>
+
+</html>

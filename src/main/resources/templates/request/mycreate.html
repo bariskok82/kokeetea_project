@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<div layout:fragment="content">
+
+    <form role="form" method="post" th:object="${requestFormDTO}">
+
+        <h2 class="mb-4">
+            발주하기
+        </h2>
+
+        <input type="hidden" th:field="*{id}">
+
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">재료</span>
+            </div>
+            <select th:field="*{ingredientId}" class="form-control">
+                <option th:value="${ingredient.id}" th:text="${ingredient.name}" th:each="ingredient : ${ingredients}"></option>
+            </select>
+        </div>
+        <p th:if="${#fields.hasErrors('ingredientId')}" th:errors="*{ingredientId}" class="text-danger">Incorrect data</p>
+
+        <input type="hidden" th:field="*{storeId}">
+        
+        <div class="input-group mt-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">수량</span>
+            </div>
+            <input type="number" th:field="*{amount}" class="form-control" placeholder="발주할 수량을 입력하세요">
+        </div>
+        <p th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" class="text-danger">Incorrect data</p>
+
+        <button th:formaction="@{/request/mycreate}" type="submit" class="btn btn-primary mt-4">등록</button>
+        <button th:onclick="location.href='/request/mylist'" type="button" class="btn btn-primary mt-4">취소</button>
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    </form>
+
+</div>
+
+</html>

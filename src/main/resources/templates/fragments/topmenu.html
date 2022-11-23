@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="topmenu">
+    <header class="topbar" data-navbarbg="skin6">
+        <nav class="navbar top-navbar navbar-expand-md">
+            <div class="navbar-header" data-logobg="skin6">
+                <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
+                  <i class="ti-menu ti-close"></i>
+                </a>
+                <div class="navbar-brand">
+                  <a th:href="@{/}">
+                      <b class="logo-icon">
+                          <img th:src="@{/opensource/dist/images/Kokeetea_logo.png}" alt="KokeeTea Logo" class="dark-logo" />
+                      </b>
+                      <h3 class="logo-text text-dark">
+                        KokeeTea
+                      </h3>
+                  </a>
+                </div>
+                <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)"
+                        data-toggle="collapse" data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i data-feather="more-vertical"></i>
+                </a>
+            </div>
+            <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                <div id="topbar-ribbon"></div>
+                <ul class="navbar-nav float-right ml-auto">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="javascript:void(0)" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                           <i data-feather="user"></i>
+                           <span class="ml-2 text-dark" sec:authentication="name"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</div>
+</html>

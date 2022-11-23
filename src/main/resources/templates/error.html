@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+</head>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+</th:block>
+
+<div layout:fragment="content">
+    <h2 class="text-center" th:text="${status}+': '+${error}"></h2>
+    <p class="text-center">에러가 발생하였습니다.</p>
+    <p class="text-center"><a th:href="@{/}">(처음으로 돌아가기)</a></p>
+</div>
+
+</html>
