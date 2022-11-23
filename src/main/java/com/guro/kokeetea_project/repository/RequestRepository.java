@@ -30,13 +30,16 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     @Query("select count(r) from Request r ")
     Long countRequest();
 
-    @Query("select new com.guro.kokeetea_project.dto.StatOfRequestByMonth(year(min(r.date)), month(min(r.date)), count(r)) from Request r where r.date >= :start and r.date < :end group by year(r.date)*100+month(r.date) order by year(r.date)*100+month(r.date) asc")
+    @Query("select new com.guro.kokeetea_project.dto.StatOfRequestByMonth(year(min(r.date)), month(min(r.date)), count(r))"
+            +"from Request r where r.date >= :start and r.date < :end group by year(r.date)*100+month(r.date) order by year(r.date)*100+month(r.date) asc")
     List<StatOfRequestByMonth> countByMonth(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    @Query("select new com.guro.kokeetea_project.dto.StatOfRequestByMonthIngredient(r.ingredient.id, r.ingredient.name, r.ingredient.category.id, r.ingredient.category.name, count(r)) from Request r where r.date >= :start and r.date < :end group by r.ingredient order by count(r) desc")
+    @Query("select new com.guro.kokeetea_project.dto.StatOfRequestByMonthIngredient(r.ingredient.id, r.ingredient.name, r.ingredient.category.id, r.ingredient.category.name, count(r))"
+            +"from Request r where r.date >= :start and r.date < :end group by r.ingredient order by count(r) desc")
     List<StatOfRequestByMonthIngredient> countByMonthIngredient(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    @Query("select new com.guro.kokeetea_project.dto.StatOfRequestByMonthStore(r.store.id, r.store.name, count(r)) from Request r where r.date >= :start and r.date < :end group by r.store order by count(r) desc")
+    @Query("select new com.guro.kokeetea_project.dto.StatOfRequestByMonthStore(r.store.id, r.store.name, count(r))"
+            +"from Request r where r.date >= :start and r.date < :end group by r.store order by count(r) desc")
     List<StatOfRequestByMonthStore> countByMonthStore(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("select count(r) from Request r where r.store.email = :email")
