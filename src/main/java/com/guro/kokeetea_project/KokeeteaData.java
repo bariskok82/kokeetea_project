@@ -143,7 +143,8 @@ public class KokeeteaData implements CommandLineRunner {
         List<Request> requestList = new ArrayList<>();
         for (int i=0; i<4000; i++) {
             Request request = new Request();
-            request.setDate(LocalDateTime.now().minusMonths((long) Math.floor(0+Math.random()*18)));
+            request.setDate(LocalDateTime.now().minusMonths((long) Math.floor(0+Math.random()*18))
+                    .minusDays((long) Math.floor(0+Math.random()*28)).minusMinutes((long) Math.floor(0+Math.random()*200)));
             request.setIngredient(ingredientRepository.listIngredient().get((int) Math.floor(Math.random()*ingredientRepository.countIngredient())));
             request.setAmount((long) Math.floor(1+Math.random()*12));
             request.setStore(storeRepository.listStore().get((int) Math.floor(Math.random()*storeRepository.countStore())));
